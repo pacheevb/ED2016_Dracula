@@ -1,7 +1,9 @@
 #ifndef TABLERO_H
 #define TABLERO_H
+
+#include "assert.h"
 #include "Deck.h"
-#include "globales.h"
+#include <qstring.h>
 
 using namespace std;
 
@@ -20,11 +22,27 @@ class Tablero{
         Carta player1[4];
         Carta player2[4];
 
+        static bool bandera;
+
     public:
+
         Tablero(){
         }
 
+        QString getCartaQString(Carta pCarta){
+            string str = ":/Cartas/Recursos/Cartas/"+pCarta.getDireccion()+".png";
+            QString qStr = QString::fromLocal8Bit(str.c_str());
+
+            return qStr;
+        }
+
+        static Tablero* getInstance() {
+            static Tablero m_instance;
+            return &m_instance;
+        }
+
         void repartir(){
+            Deck *mazo = Deck::getInstance();
             for(int i = 0; i < 4; i++){
                 player1[i] = mazo->topCarta();
             }
@@ -384,8 +402,8 @@ class Tablero{
             }
         }
 
-
         //Getters & Setters
+
 
         Carta* getCartasJ1(){
             return player1;
@@ -401,6 +419,22 @@ class Tablero{
 
         int getJActual() {
             return JActual;
+        }
+
+        int getpDir1(){
+            return pdir1;
+        }
+
+        void setpDir1(int value){
+            pdir1 = value;
+        }
+
+        int getpDir2(){
+            return pdir2;
+        }
+
+        void setpDir2(int value){
+            pdir2 = value;
         }
 };
 

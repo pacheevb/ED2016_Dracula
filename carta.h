@@ -81,7 +81,6 @@ public:
             return -1;
         }
     }
-
 };
 
 #endif // CARTA_H

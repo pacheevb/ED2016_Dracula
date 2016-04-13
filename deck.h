@@ -7,6 +7,7 @@
 #include "Carta.h"
 #include "AStack.h"
 #include <iomanip>
+#include "assert.h"
 
 using namespace std;
 
@@ -20,6 +21,13 @@ private:
     int contador;
 
 public:
+
+
+    static Deck* getInstance() {
+        static Deck m_instance;
+        return &m_instance;
+    }
+
     Deck(){
         string caras[] = {"As","Dos","Tres","Cuatro","Cinco","Seis","Siete","Ocho","Nueve","Diez",
                         "Jack","Dama","Rey"};
@@ -85,7 +93,6 @@ public:
     Carta seleccionar(int pos){
         return deck[pos];
     }
-
 };
 
 #endif // DECK_H

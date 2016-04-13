@@ -6,7 +6,6 @@ VentanaPrincipal::VentanaPrincipal(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::VentanaPrincipal)
 {
-    //setStyleSheet("background-image:url(:/Recursos/Recursos/logo.png)");
     ui->setupUi(this);
 }
 

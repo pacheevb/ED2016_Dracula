@@ -4,6 +4,8 @@
 #include "deck.h"
 #include "tablero.h"
 #include "globales.h"
+#include <iostream>
+
 
 VCortarMazo::VCortarMazo(QDialog *parent) :
     QDialog(parent),
@@ -28,8 +30,11 @@ void VCortarMazo::on_bSeguir_clicked()
 
 void VCortarMazo::on_bCortarMazo_clicked()
 {
+    Deck* mazo = Deck::getInstance();
+    Tablero* tJuego = Tablero::getInstance();
 
     bool listo = true;
+    mazo->mezclar();
 
     if (mazo->seleccionar(0).getColor() == "Rojo" && mazo->seleccionar(1).getColor() == "Negro") {
         tJuego->setJActual(1);
@@ -39,10 +44,11 @@ void VCortarMazo::on_bCortarMazo_clicked()
     }
     else if (mazo->seleccionar(0).getColor() == mazo->seleccionar(1).getColor()) {
         if (mazo->seleccionar(0).getColor() == "Rojo") {
-            if (mazo->seleccionar(0).getPalo() == "Corazon" && mazo->seleccionar(1).getPalo() == "Rombo") {
+            if (mazo->seleccionar(0).getPalo() == "Corazon" && mazo->seleccionar(1).getPalo() == "Diamante") {
                 tJuego->setJActual(1);
+                cout << "Acá!" << endl;
             }
-            else if(mazo->seleccionar(0).getPalo() == "Rombo" && mazo->seleccionar(1).getPalo() == "Corazon") {
+            else if(mazo->seleccionar(0).getPalo() == "Diamante" && mazo->seleccionar(1).getPalo() == "Corazon") {
                 tJuego->setJActual(2);
             }
             else if (mazo->seleccionar(0).getPalo() == mazo->seleccionar(1).getPalo()) {
@@ -56,15 +62,29 @@ void VCortarMazo::on_bCortarMazo_clicked()
         }
         else {
             listo = false;
+            cout << "Prueba" << endl;
         }
     }
-//:/Cartas/Recursos/PNG-cards-1.3/AsCorazon.png
-//    QPixmap pixmap("url(:/Cartas/Recursos/PNG-cards-1.3/"+ mazo->seleccionar(0).getDireccion() +".png)");
-//    QIcon ButtonIcon(pixmap);
 
-//    QPushButton carta1;
+    if(listo){
+        ui->bCortarMazo->setEnabled(false);
+        ui->bSeguir->setEnabled(true);
+    }
 
-//    carta1->setIcon(ButtonIcon);
-//    carta1->setIconSize(pixmap.rect().size())
+    string var =":/Cartas/Recursos/Cartas/"+mazo->seleccionar(0).getDireccion()+".png";
+    QString qs = QString::fromLocal8Bit(var.c_str());
+    QPixmap pixmap(qs);
+    QIcon ButtonIcon(pixmap);
+
+    ui->carta1->setIcon(ButtonIcon);
+    ui->carta1->setIconSize(QSize(ui->carta1->width(), ui->carta1->height()));
+
+    var =":/Cartas/Recursos/Cartas/"+mazo->seleccionar(1).getDireccion()+".png";
+    qs = QString::fromLocal8Bit(var.c_str());
+    pixmap = qs;
+    ButtonIcon = pixmap;
+
+    ui->carta2->setIcon(ButtonIcon);
+    ui->carta2->setIconSize(QSize(ui->carta2->width(), ui->carta2->height()));
 
 }

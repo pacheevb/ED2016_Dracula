@@ -15,6 +15,10 @@ public:
     explicit VDireccion(QWidget *parent = 0);
     ~VDireccion();
 
+private slots:
+    void on_bHorizontal_clicked();
+    void on_bVertical_clicked();
+
 private:
     Ui::VDireccion *ui;
 };

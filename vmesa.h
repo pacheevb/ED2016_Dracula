@@ -15,6 +15,9 @@ public:
     explicit VMesa(QWidget *parent = 0);
     ~VMesa();
 
+private slots:
+    void on_mano1_clicked();
+
 private:
     Ui::VMesa *ui;
 };

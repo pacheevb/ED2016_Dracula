@@ -20,6 +20,15 @@ public:
     Carta(string pCara, string pPalo){
         cara = pCara;
         palo = pPalo;
+        if (pPalo == "Diamante" || pPalo == "Corazon"){
+            color = "Rojo";
+        } else if(pPalo == "Espada" || pPalo == "Trebol"){
+            color = "Negro";
+        } else if(pPalo == "Rojo"){
+            color = "Rojo";
+        } else if(pPalo == "Negro"){
+            color = "Negro";
+        }
         direccion = pCara + pPalo;
     }
 

@@ -1,6 +1,8 @@
 #include "ventanaprincipal.h"
 #include "ui_ventanaprincipal.h"
 #include "vcortarmazo.h"
+#include "linkedstack.h"
+#include "carta.h"
 
 VentanaPrincipal::VentanaPrincipal(QWidget *parent) :
     QMainWindow(parent),

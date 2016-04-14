@@ -17,7 +17,6 @@ SOURCES += main.cpp\
     vcortarmazo.cpp \
     vdireccion.cpp \
     vmesa.cpp \
-    AStack.cpp \
     carta.cpp \
     deck.cpp \
     tablero.cpp
@@ -30,7 +29,9 @@ HEADERS  += ventanaprincipal.h \
     carta.h \
     deck.h \
     tablero.h \
-    globales.h
+    globales.h \
+    linkedstack.h \
+    nodo.h
 
 FORMS    += ventanaprincipal.ui \
     vcortarmazo.ui \

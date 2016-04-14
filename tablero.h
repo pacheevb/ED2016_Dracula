@@ -10,10 +10,10 @@ using namespace std;
 class Tablero{
     private:
         Carta tablero[3][3];
-        AStack<Carta>Undo;
-        AStack<Carta>Redo;
-        AStack<int> undoPosiciones;
-        AStack<int> redoPosiciones;
+        LinkedStack<Carta> Undo;
+        LinkedStack<Carta>Redo;
+        LinkedStack<int> undoPosiciones;
+        LinkedStack<int> redoPosiciones;
 
         int JActual = 1;
         int pdir1 = 0;
@@ -21,6 +21,8 @@ class Tablero{
 
         Carta player1[4];
         Carta player2[4];
+
+        Carta cartaSeleccionada;
 
         static bool bandera;
 
@@ -72,7 +74,7 @@ class Tablero{
         }
 
         Carta undo()throw(){
-            if (Undo.length()==0){
+            if (Undo.getSize()==0){
             }
             Carta carta = Undo.pop();
             int fila = undoPosiciones.pop();
@@ -435,6 +437,14 @@ class Tablero{
 
         void setpDir2(int value){
             pdir2 = value;
+        }
+
+        Carta getCartaSeleccionada(){
+            return cartaSeleccionada;
+        }
+
+        void setCartaSeleccionada(Carta pCarta){
+            cartaSeleccionada = pCarta;
         }
 };
 

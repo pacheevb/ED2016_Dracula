@@ -20,19 +20,18 @@ SOURCES += main.cpp\
     carta.cpp \
     deck.cpp \
     tablero.cpp \
-    undo.cpp
+    vganador.cpp
 
 HEADERS  += ventanaprincipal.h \
     vcortarmazo.h \
     vdireccion.h \
     vmesa.h \
-    AStack.h \
     carta.h \
     deck.h \
     tablero.h \
     linkedstack.h \
     nodo.h \
-    undo.h
+    vganador.h
 
 FORMS    += ventanaprincipal.ui \
     vcortarmazo.ui \

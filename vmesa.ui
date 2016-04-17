@@ -181,7 +181,7 @@
   <widget class="QLabel" name="lronda">
    <property name="geometry">
     <rect>
-     <x>1001</x>
+     <x>1015</x>
      <y>53</y>
      <width>81</width>
      <height>31</height>
@@ -237,7 +237,7 @@
   <widget class="QLabel" name="ljugador">
    <property name="geometry">
     <rect>
-     <x>944</x>
+     <x>950</x>
      <y>103</y>
      <width>131</width>
      <height>31</height>
@@ -343,7 +343,7 @@
     </font>
    </property>
    <property name="text">
-    <string>TextLabel</string>
+    <string>0:0:0</string>
    </property>
   </widget>
   <widget class="QPushButton" name="bUndo">
@@ -583,7 +583,7 @@
   <widget class="QLabel" name="Ronda">
    <property name="geometry">
     <rect>
-     <x>929</x>
+     <x>939</x>
      <y>54</y>
      <width>81</width>
      <height>31</height>

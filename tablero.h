@@ -4,17 +4,17 @@
 #include "assert.h"
 #include "Deck.h"
 #include <qstring.h>
-#include "undo.h"
 
 using namespace std;
 
 class Tablero{
     private:
         Carta tablero[3][3];
-        LinkedStack<Carta> varUndo;
-        LinkedStack<Carta>Redo;
-        LinkedStack<int> undoPosiciones;
-        LinkedStack<int> redoPosiciones;
+
+        LinkedStack<int> posMano;
+        LinkedStack<int> posMesa;
+        LinkedStack<int> jugadores;
+        LinkedStack<Carta> cartas;
 
         int JActual = 1;
         int pdir1 = 0;
@@ -28,13 +28,19 @@ class Tablero{
         Carta player2[4];
         Carta cartaSeleccionada;
 
-        Undo registro;
-
         static bool bandera;
 
     public:
 
         Tablero(){
+        }
+
+        void resetTablero(){
+            ronda = 1;
+            puntajeJ1 = 0;
+            puntajeJ2 = 0;
+            Deck* mazo = Deck::getInstance();
+            mazo->mezclar();
         }
 
         QString getCartaQString(Carta pCarta){
@@ -79,17 +85,6 @@ class Tablero{
             return lleno;
         }
 
-        Carta undo()throw(){
-            if (varUndo.getSize()==0){
-            }
-            Carta carta = varUndo.pop();
-            int fila = undoPosiciones.pop();
-            int columna = undoPosiciones.pop();
-            tablero[fila][columna] = Carta();
-
-            return carta;
-        }
-
         bool comprobarRonda(){
             if(!isFull()){
                 return false;
@@ -124,8 +119,6 @@ class Tablero{
                         j--;
                         }
                 }
-
-                cout << pdir1 << " - " << pdir2 << endl;
 
                 int puntajes1[3];
                 int puntajes2[3];
@@ -177,6 +170,11 @@ class Tablero{
                     }
                 }
 
+                posMano.clear();
+                posMesa.clear();
+                cartas.clear();
+                jugadores.clear();
+
                 return true;
             }
         }
@@ -190,7 +188,6 @@ class Tablero{
                 valido = validar(0,0);
                 if (valido == true){
                     tablero[0][0] = carta;
-                break;
                 }
                 return valido;
 
@@ -198,7 +195,6 @@ class Tablero{
                 valido = validar(0,1);
                 if (valido == true){
                     tablero[0][1] = carta;
-                break;
                 }
                 return valido;
 
@@ -206,7 +202,6 @@ class Tablero{
                 valido = validar(0,2);
                 if (valido == true){
                     tablero[0][2] = carta;
-                break;
                 }
                 return valido;
 
@@ -214,10 +209,6 @@ class Tablero{
                 valido = validar(1,0);
                 if (valido == true){
                     tablero[1][0] = carta;
-                    varUndo.push(carta);
-                    undoPosiciones.push(1);//fila
-                    undoPosiciones.push(0);//columna
-                break;
                 }
                 return valido;
 
@@ -232,43 +223,27 @@ class Tablero{
                 valido = validar(1,2);
                 if (valido == true){
                     tablero[1][2] = carta;
-                    varUndo.push(carta);
-                    undoPosiciones.push(1);//fila
-                    undoPosiciones.push(2);//columna
-                break;
                 }
                 return valido;
 
-                case 7:
+            case 7:
                 valido = validar(2,0);
                 if (valido == true){
                     tablero[2][0] = carta;
-                    varUndo.push(carta);
-                    undoPosiciones.push(2);//fila
-                    undoPosiciones.push(0);//columna
-                break;
                 }
                 return valido;
 
-                case 8:
+            case 8:
                 valido = validar(2,1);
                 if (valido == true){
                     tablero[2][1] = carta;
-                    varUndo.push(carta);
-                    undoPosiciones.push(2);//fila
-                    undoPosiciones.push(1);//columna
-                break;
                 }
                 return valido;
 
-                case 9:
+            case 9:
                 valido = validar(2,2);
                 if (valido == true){
                     tablero[2][2] = carta;
-                    varUndo.push(carta);
-                    undoPosiciones.push(2);//fila
-                    undoPosiciones.push(2);//columna
-                break;
                 }
                 return valido;
             }
@@ -438,6 +413,10 @@ class Tablero{
 
         //Getters & Setters
 
+        void setTablero(int pFila, int pCol, Carta pCarta){
+            tablero[pFila][pCol] = pCarta;
+        }
+
         Carta* getCartasJ1(){
             return player1;
         }
@@ -500,6 +479,42 @@ class Tablero{
 
         int getPuntajeJ2(){
             return puntajeJ2;
+        }
+
+        //Codigo de Undo
+
+        int getSizeUndo(){
+            return jugadores.getSize();
+        }
+
+        void pushJugada(int pPosCarta, int pJugador, Carta pCarta){
+            posMano.push(pPosCarta);
+            jugadores.push(pJugador);
+            cartas.push(pCarta);
+        }
+
+        void pushPosMesa(int pPosMesa){
+            posMesa.push(pPosMesa);
+        }
+
+        int popPosicionMano(){
+            return posMano.pop();
+        }
+
+        int popPosicionMesa(){
+            return posMesa.pop();
+        }
+
+        int popJugador(){
+            return jugadores.pop();
+        }
+
+        Carta popCarta(){
+            return cartas.pop();
+        }
+
+        void imprimirTope(){
+            cout << "Posicion: " << posMano.topValue() << " - " << "Carta: " << cartas.topValue().getDireccion() << endl;
         }
 };
 

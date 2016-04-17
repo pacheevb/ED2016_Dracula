@@ -4,13 +4,14 @@
 #include "assert.h"
 #include "Deck.h"
 #include <qstring.h>
+#include "undo.h"
 
 using namespace std;
 
 class Tablero{
     private:
         Carta tablero[3][3];
-        LinkedStack<Carta> Undo;
+        LinkedStack<Carta> varUndo;
         LinkedStack<Carta>Redo;
         LinkedStack<int> undoPosiciones;
         LinkedStack<int> redoPosiciones;
@@ -19,10 +20,15 @@ class Tablero{
         int pdir1 = 0;
         int pdir2 = 0;
 
+        int ronda = 1;
+        int puntajeJ1;
+        int puntajeJ2;
+
         Carta player1[4];
         Carta player2[4];
-
         Carta cartaSeleccionada;
+
+        Undo registro;
 
         static bool bandera;
 
@@ -65,7 +71,7 @@ class Tablero{
             bool lleno = true;
             for (int i = 0; i < 3;i++){
                 for (int j = 0; j < 3; j++){
-                    if (tablero[i][j].getCara()==""){
+                    if (tablero[i][j].getCara() == ""){
                         lleno = false;
                     }
                 }
@@ -74,9 +80,9 @@ class Tablero{
         }
 
         Carta undo()throw(){
-            if (Undo.getSize()==0){
+            if (varUndo.getSize()==0){
             }
-            Carta carta = Undo.pop();
+            Carta carta = varUndo.pop();
             int fila = undoPosiciones.pop();
             int columna = undoPosiciones.pop();
             tablero[fila][columna] = Carta();
@@ -84,9 +90,9 @@ class Tablero{
             return carta;
         }
 
-        string ganador(){
-            if(! isFull()){
-                return "Not full";
+        bool comprobarRonda(){
+            if(!isFull()){
+                return false;
             }else{
                 int medioFila = puntajeFila(0);
                 int medioColumna = puntajeColumna(0);
@@ -95,50 +101,88 @@ class Tablero{
                 int mayorFila = puntajeFila(2);
                 int mayorColumna = puntajeColumna(2);
 
-                int puntajes1[3] = {medioFila,menorFila,mayorFila};
-                int puntajes2[3] = {medioColumna,menorColumna,mayorColumna};
+                int puntajesFila[3] = {medioFila,menorFila,mayorFila};
+                int puntajesColumna[3] = {medioColumna,menorColumna,mayorColumna};
 
                 int j, temp;
                 for (int i = 0; i < 3; i++){
                     j = i;
-                    while (j > 0 && puntajes1[j] < puntajes1[j-1]){
-                        temp = puntajes1[j];
-                        puntajes1[j] = puntajes1[j-1];
-                        puntajes1[j-1] = temp;
+                    while (j > 0 && puntajesFila[j] < puntajesFila[j-1]){
+                        temp = puntajesFila[j];
+                        puntajesFila[j] = puntajesFila[j-1];
+                        puntajesFila[j-1] = temp;
                         j--;
                         }
                 }
 
                 for (int i = 0; i < 3; i++){
                     j = i;
-                    while (j > 0 && puntajes2[j] < puntajes2[j-1]){
-                        temp = puntajes2[j];
-                        puntajes2[j] = puntajes2[j-1];
-                        puntajes2[j-1] = temp;
+                    while (j > 0 && puntajesColumna[j] < puntajesColumna[j-1]){
+                        temp = puntajesColumna[j];
+                        puntajesColumna[j] = puntajesColumna[j-1];
+                        puntajesColumna[j-1] = temp;
                         j--;
                         }
                 }
 
-                if (puntajes1[0] > puntajes2[0]){
-                    return "Horizontal";
-                }else if(puntajes1[0] < puntajes2[0]){
-                    return "Vertical";
-                }else if (puntajes1[1] > puntajes2[1]){
-                    return "Horizontal";
-                }else if (puntajes1[1] < puntajes2[1]){
-                    return "Vertical";
-                }else if (puntajes1[2] > puntajes2[2]){
-                    return "Horizontal";
-                }else if (puntajes1[2] < puntajes2[2]){
-                    return "Vertical";
-                }else{
-                    return "Empate";
+                cout << pdir1 << " - " << pdir2 << endl;
+
+                int puntajes1[3];
+                int puntajes2[3];
+
+                if(pdir1 == 0){
+                    for(int i = 0; i < 3; i++){
+                        puntajes1[i] = puntajesFila[i];
+                    }
+
+                    for(int i = 0; i < 3; i++){
+                        puntajes2[i] = puntajesColumna[i];
+                    }
+                } else {
+                    for(int i = 0; i < 3; i++){
+                        puntajes2[i] = puntajesFila[i];
+                    }
+
+                    for(int i = 0; i < 3; i++){
+                        puntajes1[i] = puntajesColumna[i];
+                    }
                 }
+
+                if (puntajes1[2] > puntajes2[2]){
+                    puntajeJ1 += puntajes1[2]+ (puntajes1[2] - puntajes2[2]);
+                    puntajeJ2 += puntajes2[2];
+                }else if(puntajes1[2] < puntajes2[2]){
+                    puntajeJ1 += puntajes1[2];
+                    puntajeJ2 += puntajes2[2]+ (puntajes2[2] - puntajes1[2]);
+                }else if (puntajes1[1] > puntajes2[1]){
+                    puntajeJ1 += puntajes1[1]+ (puntajes1[1] - puntajes2[1]);
+                    puntajeJ2 += puntajes2[1];
+                }else if (puntajes1[1] < puntajes2[1]){
+                    puntajeJ1 += puntajes1[1];
+                    puntajeJ2 += puntajes2[1]+ (puntajes2[1] - puntajes1[1]);
+                }else if (puntajes1[0] > puntajes2[0]){
+                    puntajeJ1 += puntajes1[0]+ (puntajes1[0] - puntajes2[0]);
+                    puntajeJ2 += puntajes2[0];
+                }else if (puntajes1[0] < puntajes2[0]){
+                    puntajeJ1 += puntajes1[0];
+                    puntajeJ2 += puntajes2[0]+ (puntajes2[0] - puntajes1[0]);
+                }else{
+                    puntajeJ1 += puntajes1[2];
+                    puntajeJ2 += puntajes2[2];
+                }
+
+                for(int i = 0; i < 3; i++){
+                    for(int j = 0; j < 3; j++){
+                        tablero[i][j] = Carta("", "");
+                    }
+                }
+
+                return true;
             }
         }
 
         //las casillas de la matriz en este caso estan numeradas del 1 al 9
-        void setJugada (Carta carta, int numcasilla){
+        bool setJugada (Carta carta, int numcasilla){
             bool  valido = false;
             switch (numcasilla)
             {
@@ -146,41 +190,36 @@ class Tablero{
                 valido = validar(0,0);
                 if (valido == true){
                     tablero[0][0] = carta;
-                    Undo.push(carta);
-                    undoPosiciones.push(0);//fila
-                    undoPosiciones.push(0);//columna
                 break;
                 }
+                return valido;
 
             case 2:
                 valido = validar(0,1);
                 if (valido == true){
                     tablero[0][1] = carta;
-                    Undo.push(carta);
-                    undoPosiciones.push(0);//fila
-                    undoPosiciones.push(1);//columna
                 break;
                 }
+                return valido;
 
             case 3:
                 valido = validar(0,2);
                 if (valido == true){
                     tablero[0][2] = carta;
-                    Undo.push(carta);
-                    undoPosiciones.push(0);//fila
-                    undoPosiciones.push(2);//columna
                 break;
                 }
+                return valido;
 
             case 4:
                 valido = validar(1,0);
                 if (valido == true){
                     tablero[1][0] = carta;
-                    Undo.push(carta);
+                    varUndo.push(carta);
                     undoPosiciones.push(1);//fila
                     undoPosiciones.push(0);//columna
                 break;
                 }
+                return valido;
 
             case 5:
                 valido = (tablero[1][1].getCara()=="");
@@ -193,41 +232,45 @@ class Tablero{
                 valido = validar(1,2);
                 if (valido == true){
                     tablero[1][2] = carta;
-                    Undo.push(carta);
+                    varUndo.push(carta);
                     undoPosiciones.push(1);//fila
                     undoPosiciones.push(2);//columna
                 break;
                 }
+                return valido;
 
                 case 7:
                 valido = validar(2,0);
                 if (valido == true){
                     tablero[2][0] = carta;
-                    Undo.push(carta);
+                    varUndo.push(carta);
                     undoPosiciones.push(2);//fila
                     undoPosiciones.push(0);//columna
                 break;
                 }
+                return valido;
 
                 case 8:
                 valido = validar(2,1);
                 if (valido == true){
                     tablero[2][1] = carta;
-                    Undo.push(carta);
+                    varUndo.push(carta);
                     undoPosiciones.push(2);//fila
                     undoPosiciones.push(1);//columna
                 break;
                 }
+                return valido;
 
                 case 9:
                 valido = validar(2,2);
                 if (valido == true){
                     tablero[2][2] = carta;
-                    Undo.push(carta);
+                    varUndo.push(carta);
                     undoPosiciones.push(2);//fila
                     undoPosiciones.push(2);//columna
                 break;
                 }
+                return valido;
             }
         }
 
@@ -273,12 +316,11 @@ class Tablero{
 
         int puntajeFila(int fila){
             //veo si alguno de la fila es vampiro
-            if ((tablero[fila][0].getValue() == -1) || (tablero[fila][1].getValue() == -1)|| (tablero[fila][2].getValue() == -1)){
+            if ((tablero[fila][0].getValue() == -1) || (tablero[fila][1].getValue() == -1) || (tablero[fila][2].getValue() == -1)){
                 return 0;
             }else{
                 int suma = 0;
                 int multiplicar = 1;
-
 
                 //agarro las cartas de la fila
                 Carta c1 = tablero[fila][0];
@@ -286,8 +328,9 @@ class Tablero{
                 Carta c3 = tablero[fila][2];
 
                 //veo si hay 2 del mismo palo
-                if ( (c1.getPalo() == c2.getPalo()) || (c2.getPalo() == c3.getPalo()) || (c1.getPalo() == c3.getPalo()) ){
-                        multiplicar = multiplicar * 2;
+
+                if (((c1.getPalo() == c2.getPalo()) && (c1.getPalo() != ""))|| ((c2.getPalo() == c3.getPalo()) && (c2.getPalo() != "") )|| ((c1.getPalo() == c3.getPalo()) && (c3.getPalo() != "") )){
+                    multiplicar = multiplicar * 2;
                 }
 
                 //si tiene 3 cartas del mismo color
@@ -296,40 +339,35 @@ class Tablero{
                 }
 
                 //veo si son de mismo palo
-                if (c1.getPalo() == c2.getPalo()&& c2.getPalo() == c3.getPalo()){
+                if (c1.getPalo() == c2.getPalo() && c2.getPalo() == c3.getPalo()){
                     multiplicar = multiplicar * 5;
                 }
 
                 switch(fila){
                 case 0:
                     for (int i = 0; i < 3; i++){
-                        if (tablero[1][i].getValue() != -1 && tablero[2][i].getValue() != -1){
                             if (tablero[0][i].getCara()!="Rey"){
                                 suma = suma + tablero[0][i].getValue();
                             }
-                        }
                     }
+
                     suma = suma * multiplicar;
                     return suma;
 
                 case 1:
                     for (int i = 0; i < 3; i++){
-                        if (tablero[0][i].getValue() != -1 && tablero[2][1].getValue() != -1){
                             if (tablero[1][i].getCara()!="Rey"){
                                 suma = suma + tablero[1][i].getValue();
                             }
-                        }
                     }
                     suma = suma * multiplicar;
                     return suma;
 
                 case 2:
                     for(int i = 0; i < 3; i++){
-                        if(tablero[0][i].getValue() != -1 && tablero[1][i].getValue() != -1){
                             if (tablero[2][i].getCara()!="Rey"){
                                 suma = suma + tablero[2][i].getValue();
                             }
-                        }
                     }
                     suma = suma * multiplicar;
                     return suma;
@@ -352,8 +390,8 @@ class Tablero{
                 Carta c3 = tablero[2][columna];
 
                 //veo si hay 2 del mismo palo
-                if ( (c1.getPalo() == c2.getPalo()) || (c2.getPalo() == c3.getPalo()) || (c1.getPalo() == c3.getPalo())){
-                        multiplicar = multiplicar * 2;
+                if (((c1.getPalo() == c2.getPalo()) && (c1.getPalo() != ""))|| ((c2.getPalo() == c3.getPalo()) && (c2.getPalo() != ""))|| ((c1.getPalo() == c3.getPalo()) && (c3.getPalo() != ""))){
+                    multiplicar = multiplicar * 2;
                 }
 
                 //si tiene 3 cartas del mismo color
@@ -369,33 +407,27 @@ class Tablero{
                 switch(columna){
                 case 0:
                     for (int i = 0; i < 3; i++){
-                        if (tablero[i][1].getValue()!= -1 && tablero[i][2].getValue() != -1){
                             if (tablero[i][0].getCara() != "Dama"){
                                 suma = suma + tablero[i][0].getValue();
                             }
-                        }
                     }
                     suma = suma * multiplicar;
                     return suma;
 
                 case 1:
                     for (int i = 0; i < 3; i++){
-                        if(tablero[i][0].getValue() != -1 && tablero[i][2].getValue() != -1){
                             if (tablero[i][1].getCara() != "Dama"){
                                 suma = suma + tablero[i][1].getValue();
                             }
-                        }
                     }
                     suma = suma * multiplicar;
                     return suma;
 
                 case 2:
                     for (int i = 0; i < 3; i++){
-                        if(tablero[i][0].getValue() !=-1 && tablero[i][1].getValue()!=-1){
                             if(tablero[i][2].getCara() != "Dama"){
                                 suma = suma + tablero[i][2].getValue();
                             }
-                        }
                     }
                     suma = suma * multiplicar;
                     return suma;
@@ -405,7 +437,6 @@ class Tablero{
         }
 
         //Getters & Setters
-
 
         Carta* getCartasJ1(){
             return player1;
@@ -445,6 +476,30 @@ class Tablero{
 
         void setCartaSeleccionada(Carta pCarta){
             cartaSeleccionada = pCarta;
+        }
+
+        int getRonda(){
+            return ronda;
+        }
+
+        void incRonda(){
+            ronda++;
+        }
+
+        string getGanador(){
+            if(puntajeJ1 > puntajeJ2){
+                return "Jugador 1";
+            } else {
+                return "Jugador 2";
+            }
+        }
+
+        int getPuntajeJ1(){
+            return puntajeJ1;
+        }
+
+        int getPuntajeJ2(){
+            return puntajeJ2;
         }
 };
 

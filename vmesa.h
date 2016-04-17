@@ -19,8 +19,13 @@ public:
 private slots:
     void on_mano1_clicked();
     void turno();
+    void ronda();
+
     void botonesMano(bool entrada);
     void botonesMesa(bool entrada);
+    void limpiarMesa();
+    void definirGanador();
+    void marcadores();
 
     void on_campo2_clicked();
 
@@ -47,6 +52,8 @@ private slots:
 private:
     Ui::VMesa *ui;
     Tablero* tJuego = Tablero::getInstance();
+    Deck* mazo = Deck::getInstance();
+
 };
 
 #endif // VMESA_H

@@ -26,7 +26,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="recursos.qrc">:/Recursos/Recursos/CortarMazo.png</pixmap>
+    <pixmap resource="resources.qrc">:/Resources/Recursos/CortarMazo2.png</pixmap>
    </property>
   </widget>
   <widget class="QPushButton" name="bSeguir">
@@ -35,17 +35,17 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>340</y>
-     <width>121</width>
-     <height>51</height>
+     <x>252</x>
+     <y>336</y>
+     <width>90</width>
+     <height>40</height>
     </rect>
    </property>
    <property name="text">
     <string/>
    </property>
    <property name="icon">
-    <iconset resource="recursos.qrc">
+    <iconset>
      <normaloff>:/Recursos/Recursos/BotonSeguir.png</normaloff>:/Recursos/Recursos/BotonSeguir.png</iconset>
    </property>
    <property name="iconSize">
@@ -61,10 +61,10 @@
   <widget class="QPushButton" name="bCortarMazo">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>100</y>
+     <x>216</x>
+     <y>77</y>
      <width>171</width>
-     <height>221</height>
+     <height>241</height>
     </rect>
    </property>
    <property name="text">
@@ -77,8 +77,8 @@
   <widget class="QPushButton" name="carta1">
    <property name="geometry">
     <rect>
-     <x>28</x>
-     <y>130</y>
+     <x>48</x>
+     <y>128</y>
      <width>121</width>
      <height>161</height>
     </rect>
@@ -99,9 +99,9 @@
   <widget class="QPushButton" name="carta2">
    <property name="geometry">
     <rect>
-     <x>460</x>
-     <y>130</y>
-     <width>121</width>
+     <x>437</x>
+     <y>128</y>
+     <width>120</width>
      <height>161</height>
     </rect>
    </property>
@@ -112,9 +112,14 @@
     <bool>true</bool>
    </property>
   </widget>
+  <zorder>label</zorder>
+  <zorder>bSeguir</zorder>
+  <zorder>carta1</zorder>
+  <zorder>bCortarMazo</zorder>
+  <zorder>carta2</zorder>
  </widget>
  <resources>
-  <include location="recursos.qrc"/>
+  <include location="resources.qrc"/>
  </resources>
  <connections/>
 </ui>

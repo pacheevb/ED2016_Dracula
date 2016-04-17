@@ -3,7 +3,6 @@
 #include "vdireccion.h"
 #include "deck.h"
 #include "tablero.h"
-#include "globales.h"
 #include <iostream>
 
 

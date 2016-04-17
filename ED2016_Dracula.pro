@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     vmesa.cpp \
     carta.cpp \
     deck.cpp \
-    tablero.cpp
+    tablero.cpp \
+    undo.cpp
 
 HEADERS  += ventanaprincipal.h \
     vcortarmazo.h \
@@ -29,14 +30,15 @@ HEADERS  += ventanaprincipal.h \
     carta.h \
     deck.h \
     tablero.h \
-    globales.h \
     linkedstack.h \
-    nodo.h
+    nodo.h \
+    undo.h
 
 FORMS    += ventanaprincipal.ui \
     vcortarmazo.ui \
     vdireccion.ui \
-    vmesa.ui
+    vmesa.ui \
+    vganador.ui
 
 RESOURCES += \
-    recursos.qrc
+    resources.qrc

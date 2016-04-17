@@ -82,6 +82,8 @@ public:
             return 8;
         }else if(cara == "Nueve"){
             return 9;
+        }else if(cara == "Diez"){
+            return 10;
         }else if(cara == "Dama"){
             return 10;
         }else if(cara == "Rey"){

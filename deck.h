@@ -72,7 +72,6 @@ public:
     }
 
     Carta topCarta(){
-        cout << deck.getSize() << endl;
         return deck.pop();
     }
 };
